@@ -1,0 +1,280 @@
+const games = {
+  quiz: {
+    label: 'Matemática',
+    title: 'Operação Estrela',
+    type: 'Quiz',
+    icon: '×',
+    questions: [
+      {
+        question: 'Uma caixa tem 7 lápis. Se Ana comprar 5 caixas, quantos lápis ela terá?',
+        options: ['12', '35', '42', '70'],
+        answer: '35',
+        explanation: '5 caixas com 7 lápis cada uma fazem 5 × 7 = 35 lápis.',
+        level: 'Multiplicação'
+      },
+      {
+        question: 'Quanto é 48 + 26?',
+        options: ['64', '74', '84', '80'],
+        answer: '74',
+        explanation: '48 + 26 = 74, porque 40 + 20 = 60 e 8 + 6 = 14.',
+        level: 'Adição'
+      },
+      {
+        question: 'Em uma loja, 56 maçãs foram divididas em 8 cestos iguais. Quantas maçãs vão em cada cesto?',
+        options: ['7', '8', '9', '6'],
+        answer: '7',
+        explanation: '56 ÷ 8 = 7, então cada cesto recebeu 7 maçãs.',
+        level: 'Divisão'
+      },
+      {
+        question: 'Qual é o dobro de 15?',
+        options: ['20', '25', '30', '35'],
+        answer: '30',
+        explanation: 'O dobro de 15 é 15 + 15 = 30.',
+        level: 'Dobro'
+      }
+    ]
+  },
+  word: {
+    label: 'Letramento',
+    title: 'Caça de Palavras',
+    type: 'Letramento',
+    icon: 'Aa',
+    questions: [
+      {
+        question: 'Qual palavra completa a frase: O menino fez uma leitura muito _______.',
+        options: ['curiosa', 'cuidadosa', 'rapidamente', 'escolar'],
+        answer: 'cuidadosa',
+        explanation: 'A frase pede uma qualidade de leitura: uma leitura cuidadosa.',
+        level: 'Leitura'
+      },
+      {
+        question: 'Qual palavra é o antônimo de “feliz”?',
+        options: ['triste', 'alegre', 'calmo', 'bonito'],
+        answer: 'triste',
+        explanation: 'Antônimo significa palavra de sentido contrário. Felíz é oposto de triste.',
+        level: 'Vocabulário'
+      },
+      {
+        question: 'A frase “As crianças aprenderam juntos” está em que tempo verbal?',
+        options: ['passado', 'presente', 'futuro', 'afirmativo'],
+        answer: 'passado',
+        explanation: '“Aprenderam” mostra ação que aconteceu antes: verbo no passado.',
+        level: 'Gramática'
+      },
+      {
+        question: 'Qual palavra começa com a letra “B” e nomeia um lugar para ler livros?',
+        options: ['biblioteca', 'praia', 'música', 'campo'],
+        answer: 'biblioteca',
+        explanation: 'Biblioteca é o lugar onde as pessoas podem ler e estudar livros.',
+        level: 'Vocabulário'
+      }
+    ]
+  },
+  fractions: {
+    label: 'Frações',
+    title: 'Mapa das Frações',
+    type: 'Frações',
+    icon: '1/2',
+    questions: [
+      {
+        question: 'Qual fração representa metade de uma pizza?',
+        options: ['1/2', '1/4', '3/4', '2/3'],
+        answer: '1/2',
+        explanation: 'Metade de uma pizza é uma parte de duas partes iguais: 1/2.',
+        level: 'Frações'
+      },
+      {
+        question: 'Se uma barra é dividida em 4 partes iguais, qual fração representa uma parte?',
+        options: ['1/4', '4/1', '2/4', '1/8'],
+        answer: '1/4',
+        explanation: 'Uma parte de quatro partes iguais é 1/4.',
+        level: 'Frações'
+      },
+      {
+        question: 'Qual fração é maior: 1/2 ou 1/4?',
+        options: ['1/2', '1/4', 'são iguais', 'nenhuma'],
+        answer: '1/2',
+        explanation: 'Metade de algo é maior do que uma quarta parte.',
+        level: 'Comparação'
+      },
+      {
+        question: 'Qual fração corresponde a duas partes de quatro partes iguais?',
+        options: ['2/4', '4/2', '1/3', '2/8'],
+        answer: '2/4',
+        explanation: 'Duas partes de quatro partes iguais representam 2/4.',
+        level: 'Frações'
+      }
+    ]
+  },
+  logic: {
+    label: 'Raciocínio',
+    title: 'Rota dos Números',
+    type: 'Sequências',
+    icon: '?',
+    questions: [
+      {
+        question: 'Qual é o próximo número da sequência: 2, 4, 6, 8, ____?',
+        options: ['9', '10', '11', '12'],
+        answer: '10',
+        explanation: 'A sequência soma 2 a cada número: 2, 4, 6, 8, 10.',
+        level: 'Sequência'
+      },
+      {
+        question: 'Qual número completa a sequência: 5, 10, 15, 20, ____?',
+        options: ['21', '25', '30', '35'],
+        answer: '25',
+        explanation: 'A sequência avança de 5 em 5. Depois de 20 vem 25.',
+        level: 'Sequência'
+      },
+      {
+        question: 'Uma sequência começa com 3 e cresce 3 unidades. Qual é o terceiro número?',
+        options: ['6', '7', '9', '12'],
+        answer: '9',
+        explanation: 'A sequência é 3, 6, 9, então o terceiro número é 9.',
+        level: 'Sequência'
+      },
+      {
+        question: 'Qual é o próximo número: 10, 9, 8, 7, ____?',
+        options: ['5', '6', '8', '10'],
+        answer: '6',
+        explanation: 'A sequência diminui 1 unidade a cada vez: 10, 9, 8, 7, 6.',
+        level: 'Sequência'
+      }
+    ]
+  }
+};
+
+const choiceScreen = document.getElementById('choiceScreen');
+const gameScreen = document.getElementById('gameScreen');
+const gameGrid = document.getElementById('gameGrid');
+const gameCard = document.querySelectorAll('.game-card');
+const gameRenderer = document.getElementById('gameRenderer');
+const gameTitle = document.getElementById('gameTitle');
+const gameScreenLabel = document.getElementById('gameScreenLabel');
+const startButton = document.getElementById('startButton');
+const backButton = document.getElementById('backButton');
+const scoreValue = document.getElementById('scoreValue');
+
+let currentGame = 'quiz';
+let currentQuestion = 0;
+let score = 0;
+
+function openGame(gameKey) {
+  currentGame = gameKey;
+  currentQuestion = 0;
+  score = 0;
+  choiceScreen.classList.remove('active');
+  gameScreen.classList.add('active');
+  scoreValue.textContent = score;
+  renderGame(games[gameKey]);
+}
+
+function backToMenu() {
+  gameScreen.classList.remove('active');
+  choiceScreen.classList.add('active');
+}
+
+function renderGame(game) {
+  const data = game.questions[currentQuestion];
+  gameTitle.textContent = game.title;
+  gameScreenLabel.textContent = game.label;
+  const playerOptions = data.options.map((option, index) => {
+    return `<button class="answer-button" data-index="${index}" data-answer="${option}">${option}</button>`;
+  }).join('');
+
+  gameRenderer.innerHTML = `
+    <div class="question-card">
+      <div class="question-top">
+        <span class="question-number">Questão ${currentQuestion + 1}/${game.questions.length}</span>
+        <span class="question-level">${data.level}</span>
+      </div>
+      <div class="question-text">${data.question}</div>
+      <div class="answer-grid">
+        ${playerOptions}
+      </div>
+      <div class="question-actions">
+        <span class="question-message" id="message">Escolha a resposta</span>
+        <button class="btn next-button" id="nextButton" disabled>Próxima</button>
+      </div>
+    </div>
+  `;
+
+  const buttons = Array.from(document.querySelectorAll('.answer-button'));
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => handleAnswer(button, data, game));
+  });
+}
+
+function handleAnswer(button, data, game) {
+  const allButtons = Array.from(document.querySelectorAll('.answer-button'));
+  const selected = button.dataset.answer;
+  const message = document.getElementById('message');
+  const nextButton = document.getElementById('nextButton');
+
+  allButtons.forEach((option) => {
+    option.disabled = true;
+    if (option.dataset.answer === data.answer) {
+      option.classList.add('correct');
+    }
+  });
+
+  if (selected === data.answer) {
+    button.classList.add('correct');
+    score += 10;
+    scoreValue.textContent = score;
+    message.textContent = 'Parabéns! Você acertou!';
+  } else {
+    button.classList.add('wrong');
+    message.textContent = 'Quase! ' + data.explanation;
+  }
+
+  nextButton.disabled = false;
+  nextButton.textContent = currentQuestion < game.questions.length - 1 ? 'Próxima' : 'Finalizar';
+  nextButton.onclick = () => {
+    if (currentQuestion < game.questions.length - 1) {
+      currentQuestion++;
+      renderGame(game);
+    } else {
+      finishGame(game);
+    }
+  };
+}
+
+function finishGame(game) {
+  const finalGrade = Math.min(100, Math.round((score / (game.questions.length * 10)) * 100));
+
+  gameRenderer.innerHTML = `
+    <div class="correct-card">
+      <h3>Missão concluída!</h3>
+      <p>Você concluiu o jogo <strong>${game.title}</strong> com <strong>${score}</strong> pontos.</p>
+      <p>Seu aproveitamento foi <strong>${finalGrade}%</strong>.</p>
+      <div class="question-actions">
+        <span class="question-message">Continue explorando!</span>
+        <button class="btn primary" id="restartButton">Jogar de Novo</button>
+      </div>
+    </div>
+  `;
+
+  const restartButton = document.getElementById('restartButton');
+  restartButton.addEventListener('click', () => {
+    backToMenu();
+  });
+}
+
+gameGrid.addEventListener('click', (event) => {
+  const card = event.target.closest('.game-card');
+  if (!card) {
+    return;
+  }
+  const key = card.dataset.game;
+  openGame(key);
+});
+
+startButton.addEventListener('click', () => {
+  openGame('quiz');
+});
+
+backButton.addEventListener('click', () => {
+  backToMenu();
+});

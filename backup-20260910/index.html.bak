@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Educativo 5º Ano</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" class="brand-svg" aria-label="Logo">
+            <path d="M12 2L2 12h4l6-6 6 6h4L12 2z" fill="currentColor" opacity=".95"/>
+            <path d="M4 13h16v8H4z" fill="currentColor" opacity=".5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Jogos Educativos</span>
+          <span class="brand-subtitle">Estratégia Pedagógica</span>
+        </div>
+      </div>
+
+      <div class="student-card">
+        <div class="student-avatar">A</div>
+        <div>
+          <span class="student-label">Aluno</span>
+          <span class="student-name">Turma 5A</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-link active" href="#">
+          <span class="nav-icon">✦</span>
+          <span>Jornada</span>
+        </a>
+        <a class="nav-link" href="#">
+          <span class="nav-icon">☻</span>
+          <span>Aprender</span>
+        </a>
+        <a class="nav-link" href="#">
+          <span class="nav-icon">☁</span>
+          <span>Atividades</span>
+        </a>
+        <a class="nav-link" href="#">
+          <span class="nav-icon">☼</span>
+          <span>Progresso</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="day-card">
+          <span class="day-label">Missão do Dia</span>
+          <span class="day-title">Exploradores</span>
+          <span class="day-progress">
+            <span class="progress-bar"><span class="progress-fill"></span></span>
+          </span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="screen choice-screen active" id="choiceScreen">
+        <header class="topbar">
+          <div>
+            <span class="section-tag">Portal de Jogos</span>
+            <h1>Escolha uma missão</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="soundButton">♫</button>
+            <div class="user-pill">
+              <span class="small-avatar">5º</span>
+              <span>Turma</span>
+            </div>
+          </div>
+        </header>
+
+        <section class="hero">
+          <div class="hero-content">
+            <span class="hero-kicker">Roteiro de Aprendizagem</span>
+            <h2>Exploradores do Saber</h2>
+            <p>
+              Jogos educativos como estratégia pedagógica para
+              descobrir, resolver e aprender com desafios de leitura,
+              números e lógica.
+            </p>
+            <div class="hero-buttons">
+              <button class="btn primary" id="startButton">
+                Começar Jornada
+              </button>
+              <button class="btn ghost">Ver Objetivos</button>
+            </div>
+            <div class="hero-stats">
+              <div>
+                <span class="stat-number">04</span>
+                <span class="stat-label">Jogos</span>
+              </div>
+              <div>
+                <span class="stat-number">18</span>
+                <span class="stat-label">Missões</span>
+              </div>
+              <div>
+                <span class="stat-number">+10</span>
+                <span class="stat-label">Pontos</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-art">
+            <div class="planet">
+              <div class="planet-inner">
+                <span class="planet-sun">✦</span>
+                <span class="planet-star star-one">✦</span>
+                <span class="planet-star star-two">✦</span>
+                <span class="planet-star star-three">✦</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="game-grid" id="gameGrid">
+          <article class="game-card" data-game="quiz">
+            <div class="game-card-top">
+              <span class="game-icon math-icon">×</span>
+              <span class="game-badge">Matemática</span>
+            </div>
+            <div class="game-card-body">
+              <span class="game-category">Quiz</span>
+              <h3>Operação Estrela</h3>
+              <p>Resolva cálculos e descubra a estrela brilhante.</p>
+            </div>
+            <div class="game-card-footer">
+              <span class="game-level">Nível 5º</span>
+              <span class="play-arrow">➜</span>
+            </div>
+          </article>
+
+          <article class="game-card" data-game="word">
+            <div class="game-card-top">
+              <span class="game-icon word-icon">Aa</span>
+              <span class="game-badge">Letramento</span>
+            </div>
+            <div class="game-card-body">
+              <span class="game-category">Palavras</span>
+              <h3>Caça de Palavras</h3>
+              <p>Complete frases e forme sentido com leitura.</p>
+            </div>
+            <div class="game-card-footer">
+              <span class="game-level">Nível Leitura</span>
+              <span class="play-arrow">➜</span>
+            </div>
+          </article>
+
+          <article class="game-card" data-game="fractions">
+            <div class="game-card-top">
+              <span class="game-icon frac-icon">
+                <span class="frac-one">1</span><span class="frac-line">/</span><span class="frac-two">2</span>
+              </span>
+              <span class="game-badge">Frações</span>
+            </div>
+            <div class="game-card-body">
+              <span class="game-category">Frações</span>
+              <h3>Mapa das Frações</h3>
+              <p>Entenda partes, pedaços e quantidades.</p>
+            </div>
+            <div class="game-card-footer">
+              <span class="game-level">Nível 5º</span>
+              <span class="play-arrow">➜</span>
+            </div>
+          </article>
+
+          <article class="game-card" data-game="logic">
+            <div class="game-card-top">
+              <span class="game-icon logic-icon">?</span>
+              <span class="game-badge">Raciocínio</span>
+            </div>
+            <div class="game-card-body">
+              <span class="game-category">Padrões</span>
+              <h3>Rota dos Números</h3>
+              <p>Observe sequências e descubra o próximo passo.</p>
+            </div>
+            <div class="game-card-footer">
+              <span class="game-level">Nível Lógico</span>
+              <span class="play-arrow">➜</span>
+            </div>
+          </article>
+        </section>
+      </section>
+
+      <section class="screen game-screen" id="gameScreen">
+        <div class="game-screen-top">
+          <button class="btn back-button" id="backButton">← Voltar</button>
+          <div class="game-title-wrap">
+            <span class="game-screen-label" id="gameScreenLabel">Jogo</span>
+            <h2 id="gameTitle">Operação Estrela</h2>
+          </div>
+          <div class="score-panel">
+            <span class="score-label">Pontos</span>
+            <span class="score-value" id="scoreValue">0</span>
+          </div>
+        </div>
+
+        <div class="game-stage">
+          <div id="gameRenderer" class="game-render">
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+</body>
+</html>

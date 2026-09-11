@@ -419,35 +419,38 @@ function gerarPerguntas(chaveJogo, quantidade) {
   return perguntas;
 }
 
-/* ---------- pontuações (por pessoa, persistente) ---------- */
-const CHAVE_PONTUACOES_NOVA = 'pj_pontuacoes_v1';
-const CHAVE_PONTUACOES_ANTIGA = 'pj_puntuaciones_v1';
+/* ---------- pontuações compartilhadas pela sala ---------- */
 const CHAVE_NOME_NOVA = 'pj_ultimo_nome';
 const CHAVE_NOME_ANTIGA = 'pj_ultimo_nombre';
 
-function carregarPontuacoes() {
+async function carregarPontuacoes() {
   try {
-    let val = localStorage.getItem(CHAVE_PONTUACOES_NOVA);
-    if (val === null) {
-      /* migra dados salvos com a chave antiga */
-      val = localStorage.getItem(CHAVE_PONTUACOES_ANTIGA);
-      if (val !== null) {
-        localStorage.setItem(CHAVE_PONTUACOES_NOVA, val);
-        localStorage.removeItem(CHAVE_PONTUACOES_ANTIGA);
-      }
-    }
-    return val ? JSON.parse(val) : [];
+    const resposta = await fetch('/api/pontuacoes');
+    if (!resposta.ok) return [];
+    return await resposta.json();
+  } catch (e) {
+    console.warn('não foi possível carregar pontuações do servidor', e);
+    return [];
   }
-  catch (e) { return []; }
 }
-function salvarPontuacoes(lista) {
-  try { localStorage.setItem(CHAVE_PONTUACOES_NOVA, JSON.stringify(lista)); } catch (e) { console.warn('não foi possível salvar'); }
+
+async function salvarPontuacoes(lista) {
+  try {
+    const resposta = await fetch('/api/pontuacoes', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lista)
+    });
+    return resposta.ok;
+  } catch (e) {
+    console.warn('não foi possível sincronizar pontuações do servidor', e);
+    return false;
+  }
 }
-function registrarPartida(nome, chaveJogo, pontos, acertos, total) {
+
+async function registrarPartida(nome, chaveJogo, pontos, acertos, total) {
   const pct = Math.round((acertos / total) * 100);
-  const lista = carregarPontuacoes();
-  lista.push({
-    id: Date.now(),
+  const payload = {
     nome: nome.trim(),
     dataPartida: new Date().toISOString().slice(0, 16).replace('T', ' '),
     jogo: jogos[chaveJogo].title,
@@ -455,9 +458,23 @@ function registrarPartida(nome, chaveJogo, pontos, acertos, total) {
     acertos,
     total,
     pct,
-  });
-  salvarPontuacoes(lista);
-  return pct;
+  };
+
+  try {
+    const resposta = await fetch('/api/pontuacoes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!resposta.ok) {
+      console.warn('registro não enviado ao servidor');
+      return pct;
+    }
+    return pct;
+  } catch (e) {
+    console.warn('não foi possível registrar partida no servidor', e);
+    return pct;
+  }
 }
 
 /* ---------- UI: referências ---------- */
@@ -606,11 +623,11 @@ function responder(botao, data, chaveJogo) {
   };
 }
 
-function finalizarJogo(chaveJogo) {
+async function finalizarJogo(chaveJogo) {
   const jogo = jogos[chaveJogo];
   const perguntas = jogo._perguntas;
   const total = perguntas.length;
-  const pct = registrarPartida(jogador, chaveJogo, pontos, acertos, total);
+  const pct = await registrarPartida(jogador, chaveJogo, pontos, acertos, total);
   delete jogo._perguntas;
 
   const estrelas = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 50 ? '⭐' : '🌱';
@@ -620,7 +637,7 @@ function finalizarJogo(chaveJogo) {
       <h3>Missão cumprida! ${estrelas}</h3>
       <p><strong>${jogo.title}</strong> — Jogador: <strong>${jogador}</strong></p>
       <p>Pontos: <strong>${pontos}</strong> · Acertos: <strong>${acertos}/${total}</strong> · Rendimento <strong>${pct}%</strong></p>
-      <p>Pontuação registrada no ranking. ✅</p>
+      <p>Pontuação registrada no ranking da sala. ✅</p>
       <div class="question-actions">
         <span class="question-message">Continue explorando!</span>
         <button class="btn primary" id="verRankingBtn">Ver Ranking</button>
@@ -645,8 +662,8 @@ rankClose.addEventListener('click', () => {
   choiceScreen.classList.add('active');
 });
 
-function renderRanking() {
-  const lista = carregarPontuacoes();
+async function renderRanking() {
+  const lista = await carregarPontuacoes();
   const contEl = document.getElementById('rankingBody');
 
   if (lista.length === 0) {
@@ -655,7 +672,6 @@ function renderRanking() {
     return;
   }
 
-  /* resumo por pessoa */
   const porPessoa = {};
   lista.forEach(r => {
     const k = r.nome.toLowerCase();
@@ -683,8 +699,8 @@ function renderRanking() {
   document.getElementById('rankingResumen').textContent = `${lista.length} registros · ${Object.keys(porPessoa).length} jogadores`;
 }
 
-function baixarCSV() {
-  const lista = carregarPontuacoes();
+async function baixarCSV() {
+  const lista = await carregarPontuacoes();
   if (lista.length === 0) { alert('Não há pontuações para exportar.'); return; }
   const linhas = [['Nome', 'Data', 'Jogo', 'Pontos', 'Acertos', 'Total', 'Rendimento %']];
   lista.forEach(r => {
@@ -721,9 +737,9 @@ if (navRanking) navRanking.addEventListener('click', (e) => { e.preventDefault()
 if (heroRankBtn) heroRankBtn.addEventListener('click', () => { abrirRanking(); });
 
 document.getElementById('csvButton').addEventListener('click', baixarCSV);
-document.getElementById('clearButton').addEventListener('click', () => {
+document.getElementById('clearButton').addEventListener('click', async () => {
   if (confirm('Limpar TODAS as pontuações registradas?')) {
-    salvarPontuacoes([]);
+    await fetch('/api/pontuacoes', { method: 'DELETE' });
     renderRanking();
   }
 });

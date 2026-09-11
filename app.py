@@ -43,6 +43,24 @@ def salvar_pontuacoes(lista):
         json.dump(lista, f, ensure_ascii=False, indent=2)
 
 
+def obter_payload_json():
+    payload = request.get_json(silent=True)
+    if isinstance(payload, dict):
+        return payload
+    raw = request.get_data(cache=True, as_text=False)
+    if not raw:
+        return {}
+    for encoding in ('utf-8', 'latin-1'):
+        try:
+            decoded = raw.decode(encoding)
+            parsed = json.loads(decoded)
+            if isinstance(parsed, dict):
+                return parsed
+        except Exception:
+            continue
+    return {}
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -66,7 +84,7 @@ def listar_pontuacoes():
 
 @app.route('/api/pontuacoes', methods=['POST'])
 def registrar_pontuacao():
-    payload = request.get_json(silent=True) or {}
+    payload = obter_payload_json()
     nome = str(payload.get('nome', '')).strip()
     jogo = str(payload.get('jogo', '')).strip()
     sala = normalize_sala(payload.get('sala', 'Sala 1'))

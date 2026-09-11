@@ -172,6 +172,20 @@ body {
   font-weight: 700;
 }
 
+.student-card .small-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--soft);
+  color: var(--green-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: auto;
+}
+
 .nav {
   display: flex;
   flex-direction: column;
@@ -895,6 +909,19 @@ body {
   font-size: 16px;
   color: var(--text);
   outline: none;
+}
+
+.modal-card select {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--soft);
+  padding: 14px 16px;
+  font-family: var(--font);
+  font-size: 16px;
+  color: var(--text);
+  outline: none;
+  margin-top: 12px;
 }
 
 .modal-card input.input-error {

@@ -9,5 +9,38 @@
     "acertos": 4,
     "total": 5,
     "pct": 80
+  },
+  {
+    "id": "2173f5ec-922c-4c23-93a4-32eec9dfa1bb",
+    "nome": "Aluno Sala 1",
+    "sala": "Sala 1",
+    "dataPartida": "2026-09-11 11:37",
+    "jogo": "Operação Estrela",
+    "pontos": 80,
+    "acertos": 4,
+    "total": 5,
+    "pct": 80
+  },
+  {
+    "id": "5cb8f411-1352-40bf-94ab-98cdcfe27e1d",
+    "nome": "Aluno Sala 1",
+    "sala": "Sala 1",
+    "dataPartida": "2026-09-11 11:38",
+    "jogo": "Operação Estrela",
+    "pontos": 80,
+    "acertos": 4,
+    "total": 5,
+    "pct": 80
+  },
+  {
+    "id": "b7a7d6fc-7055-4c3d-9370-866f94f6fbcd",
+    "nome": "Aluno Sala 1",
+    "sala": "Sala 1",
+    "dataPartida": "2026-09-11 11:40",
+    "jogo": "Operacao Estrela",
+    "pontos": 80,
+    "acertos": 4,
+    "total": 5,
+    "pct": 80
   }
 ]

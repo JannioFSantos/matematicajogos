@@ -505,6 +505,7 @@ const nameOk = document.getElementById('nameOk');
 const nameCancel = document.getElementById('nameCancel');
 const currentPlayerEl = document.getElementById('currentPlayer');
 const currentPlayerPill = document.getElementById('currentPlayerPill');
+const changePlayerButton = document.getElementById('changePlayerButton');
 const navRanking = document.getElementById('navRanking');
 const heroRankBtn = document.getElementById('heroRankBtn');
 
@@ -548,6 +549,12 @@ nameCancel.addEventListener('click', () => {
   nameModal.classList.remove('active');
   proximoJogo = null;
 });
+
+if (changePlayerButton) {
+  changePlayerButton.addEventListener('click', () => {
+    pedirNome(() => {});
+  });
+}
 
 function abrirJogo(chaveJogo) {
   if (!jogador) { pedirNome(() => abrirJogo(chaveJogo)); return; }
@@ -679,7 +686,7 @@ rankClose.addEventListener('click', () => {
   choiceScreen.classList.add('active');
 });
 
-async async function renderRanking() {
+async function renderRanking() {
   const lista = await carregarPontuacoes();
   const contEl = document.getElementById('rankingBody');
 

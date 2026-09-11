@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matemática — Jogos de Números</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" class="brand-svg" aria-label="Logo">
+            <path d="M12 2L2 12h4l6-6 6 6h4L12 2z" fill="currentColor" opacity=".95"/>
+            <path d="M4 13h16v8H4z" fill="currentColor" opacity=".5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Mate Números</span>
+          <span class="brand-subtitle">Estratégia Pedagógica</span>
+        </div>
+      </div>
+
+      <div class="student-card">
+        <div class="student-avatar">A</div>
+        <div>
+          <span class="student-label">Jogador</span>
+          <span class="student-name" id="currentPlayer">Sem nome</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-link active" href="#">
+          <span class="nav-icon">✦</span>
+          <span>Missões</span>
+        </a>
+        <a class="nav-link" id="navRanking" href="#">
+          <span class="nav-icon">☼</span>
+          <span>Ranking</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="day-card">
+          <span class="day-label">Missão do dia</span>
+          <span class="day-title">Exploradores</span>
+          <span class="day-progress">
+            <span class="progress-bar"><span class="progress-fill"></span></span>
+          </span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="screen choice-screen active" id="choiceScreen">
+        <header class="topbar">
+          <div>
+            <span class="section-tag">Portal de Números</span>
+            <h1>Escolha uma missão</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="rankButton" title="Ranking">🏆</button>
+            <div class="user-pill">
+              <span class="small-avatar">5º</span>
+              <span id="currentPlayerPill">Sem nome</span>
+            </div>
+          </div>
+        </header>
+
+        <section class="hero">
+          <div class="hero-content">
+            <span class="hero-kicker">Rota de Aprendizagem</span>
+            <h2>Exploradores de Números</h2>
+            <p>
+              Jogos matemáticos como estratégia pedagógica para
+              descobrir, resolver e aprender com desafios de cálculo,
+              frações, padrões e lógica numérica.
+            </p>
+            <div class="hero-buttons">
+              <button class="btn primary" id="startButton">
+                Começar Missão
+              </button>
+              <button class="btn ghost" id="heroRankBtn">Ver Pontuações</button>
+            </div>
+            <div class="hero-stats">
+              <div>
+                <span class="stat-number">04</span>
+                <span class="stat-label">Jogos</span>
+              </div>
+              <div>
+                <span class="stat-number">45+</span>
+                <span class="stat-label">Perguntas</span>
+              </div>
+              <div>
+                <span class="stat-number">∞</span>
+                <span class="stat-label">Aleatórias</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-art">
+            <div class="planet">
+              <div class="planet-inner">
+                <span class="planet-sun">✦</span>
+                <span class="planet-star star-one">✦</span>
+                <span class="planet-star star-two">✦</span>
+                <span class="planet-star star-three">✦</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="game-grid" id="gameGrid">
+          <article class="game-card" data-game="quiz">
+            <div class="game-card-top">
+              <span class="game-icon math-icon">×</span>
+              <span class="game-badge">Matemática</span>
+            </div>
+            <div class="game-card-body">
+              <span class="game-category">Quiz</span>
+              <h3>Operação Estrela</h3>
+              <p>Somas, subtrações, multiplicações e divisões. Perguntas novas cada vez!</p>
+            </div>
+            <div class="game-card-footer">
+              <span class="game-level">Nível 5º</span>
+              <span class="play-arrow">➜</span>
+            </div>
+          </article>
+
+          <article class="game-card" data-game="mental">
+            <div class="game-card-top">
+              <span class="game-icon logic-icon">÷</span>
+              <span class="game-badge">Relâmpago</span>
+            </div>
+            <div class="game-card-body">
+              <span class="game-category">Cálculo Mental</span>
+              <h3>Desafio Numérico</h3>
+              <p>15 operações contra o relógio: soma, subtração, multiplica e divide.</p>
+            </div>
+            <div class="game-card-footer">
+              <span class="game-level">Nível Rápido</span>
+              <span class="play-arrow">➜</span>
+            </div>
+          </article>
+
+          <article class="game-card" data-game="fractions">
+            <div class="game-card-top">
+              <span class="game-icon frac-icon">
+                <span class="frac-one">1</span><span class="frac-line">/</span><span class="frac-two">2</span>
+              </span>
+              <span class="game-badge">Frações</span>
+            </div>
+            <div class="game-card-body">
+              <span class="game-category">Frações</span>
+              <h3>Mapa das Frações</h3>
+              <p>Partes, pedaços, comparações e equivalências com novos desafios.</p>
+            </div>
+            <div class="game-card-footer">
+              <span class="game-level">Nível 5º</span>
+              <span class="play-arrow">➜</span>
+            </div>
+          </article>
+
+          <article class="game-card" data-game="logic">
+            <div class="game-card-top">
+              <span class="game-icon logic-icon">?</span>
+              <span class="game-badge">Raciocínio</span>
+            </div>
+            <div class="game-card-body">
+              <span class="game-category">Padrões</span>
+              <h3>Rota dos Números</h3>
+              <p>Sequências e padrões: encontra o próximo passo sempre distinto.</p>
+            </div>
+            <div class="game-card-footer">
+              <span class="game-level">Nível Lógico</span>
+              <span class="play-arrow">➜</span>
+            </div>
+          </article>
+        </section>
+      </section>
+
+      <section class="screen game-screen" id="gameScreen">
+        <div class="game-screen-top">
+          <button class="btn back-button" id="backButton">← Voltar</button>
+          <div class="game-title-wrap">
+            <span class="game-screen-label" id="gameScreenLabel">Jogo</span>
+            <h2 id="gameTitle">Operação Estrela</h2>
+          </div>
+          <div class="score-panel">
+            <span class="score-label">Pontos</span>
+            <span class="score-value" id="scoreValue">0</span>
+          </div>
+        </div>
+
+        <div class="game-stage">
+          <div id="gameRenderer" class="game-render"></div>
+        </div>
+      </section>
+
+      <section class="screen ranking-screen" id="rankingScreen">
+        <div class="game-screen-top">
+          <button class="btn back-button" id="rankClose">← Voltar</button>
+          <div class="game-title-wrap">
+            <span class="game-screen-label">Registro</span>
+            <h2>Pontuações por jogador</h2>
+          </div>
+          <div class="score-panel">
+            <span class="score-label">Registros</span>
+            <span class="score-value" id="rankingResumen">0</span>
+          </div>
+        </div>
+
+        <div class="ranking-box">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>Jogador</th>
+                <th>Partidas</th>
+                <th>Pontos totais</th>
+                <th>Melhor %</th>
+                <th>Rendimento</th>
+              </tr>
+            </thead>
+            <tbody id="rankingBody"></tbody>
+          </table>
+          <div class="ranking-actions">
+            <button class="btn primary" id="csvButton">⬇ Exportar CSV</button>
+            <button class="btn ghost-danger" id="clearButton">Limpar tudo</button>
+          </div>
+          <p class="ranking-hint">As pontuações são guardadas neste dispositivo (localStorage) e podem ser exportadas a CSV para o docente.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="nameModal">
+    <div class="modal-card">
+      <div class="modal-icon">🧮</div>
+      <h3>Quem vai jogar?</h3>
+      <p>Escreva seu nome para que seus pontos fiquem registrados no ranking.</p>
+      <input type="text" id="playerNameInput" maxlength="30" placeholder="Seu nome" autocomplete="off" />
+      <div class="modal-actions">
+        <button class="btn ghost" id="nameCancel">Cancelar</button>
+        <button class="btn primary" id="nameOk">A jogar!</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

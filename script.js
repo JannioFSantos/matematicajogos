@@ -6,8 +6,8 @@
 
 /* ---------- utilidades ---------- */
 function rnd(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-function shuffle(arr) {
+function sortear(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function embaralhar(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -18,17 +18,17 @@ function shuffle(arr) {
 function gerarDistratores(correta) {
   /* gera 3 distratores plausíveis perto da resposta correta */
   const ops = [1, 2, 3, 5, 10];
-  const set = new Set([correta]);
-  let intentos = 0;
-  while (set.size < 4 && intentos < 60) {
-    intentos++;
-    const delta = pick(ops) * (Math.random() < 0.5 ? -1 : 1);
-    const cand = correta + delta;
-    if (cand >= 0 && !set.has(cand)) set.add(cand);
+  const conjunto = new Set([correta]);
+  let tentativas = 0;
+  while (conjunto.size < 4 && tentativas < 60) {
+    tentativas++;
+    const delta = sortear(ops) * (Math.random() < 0.5 ? -1 : 1);
+    const candidato = correta + delta;
+    if (candidato >= 0 && !conjunto.has(candidato)) conjunto.add(candidato);
   }
   let extra = 1;
-  while (set.size < 4) { const cand = correta + extra * 11; if (cand >= 0) set.add(cand); extra++; }
-  return shuffle(Array.from(set));
+  while (conjunto.size < 4) { const candidato = correta + extra * 11; if (candidato >= 0) conjunto.add(candidato); extra++; }
+  return embaralhar(Array.from(conjunto));
 }
 
 /* ---------- geradores de perguntas (matemática) ---------- */
@@ -39,7 +39,7 @@ const geradores = {
       gerar() {
         const a = rnd(10, 99), b = rnd(10, 99), r = a + b;
         return {
-          q: `Quanto é ${a} + ${b}?`,
+          pergunta: `Quanto é ${a} + ${b}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `${a} + ${b} = ${r}.`,
         };
@@ -50,7 +50,7 @@ const geradores = {
       gerar() {
         const a = rnd(10, 60), b = rnd(10, 60), c = rnd(10, 60), r = a + b + c;
         return {
-          q: `Resolve: ${a} + ${b} + ${c} = ?`,
+          pergunta: `Resolva: ${a} + ${b} + ${c} = ?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `${a} + ${b} + ${c} = ${r}.`,
         };
@@ -61,7 +61,7 @@ const geradores = {
       gerar() {
         const a = rnd(20, 99), b = rnd(1, a - 1), r = a - b;
         return {
-          q: `Quanto é ${a} − ${b}?`,
+          pergunta: `Quanto é ${a} − ${b}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `${a} − ${b} = ${r}.`,
         };
@@ -72,18 +72,18 @@ const geradores = {
       gerar() {
         const a = rnd(2, 12), b = rnd(2, 12), r = a * b;
         return {
-          q: `Quanto é ${a} × ${b}?`,
+          pergunta: `Quanto é ${a} × ${b}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `${a} × ${b} = ${r}.`,
         };
       }
     },
     {
-      nivel: 'División exata',
+      nivel: 'Divisão exata',
       gerar() {
         const b = rnd(2, 12), c = rnd(2, 12), a = b * c, r = a / b;
         return {
-          q: `Quanto é ${a} ÷ ${b}?`,
+          pergunta: `Quanto é ${a} ÷ ${b}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `${a} ÷ ${b} = ${r}, porque ${b} × ${r} = ${a}.`,
         };
@@ -94,7 +94,7 @@ const geradores = {
       gerar() {
         const a = rnd(3, 90), r = a * 2;
         return {
-          q: `Qual é o dobro de ${a}?`,
+          pergunta: `Qual é o dobro de ${a}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `O dobro de ${a} é ${a} × 2 = ${r}.`,
         };
@@ -105,7 +105,7 @@ const geradores = {
       gerar() {
         const a = rnd(3, 60), r = a * 3;
         return {
-          q: `Qual é o triplo de ${a}?`,
+          pergunta: `Qual é o triplo de ${a}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `O triplo de ${a} é ${a} × 3 = ${r}.`,
         };
@@ -116,7 +116,7 @@ const geradores = {
       gerar() {
         const a = rnd(2, 50) * 2, r = a / 2;
         return {
-          q: `Qual é a metade de ${a}?`,
+          pergunta: `Qual é a metade de ${a}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `A metade de ${a} é ${a} ÷ 2 = ${r}.`,
         };
@@ -126,12 +126,12 @@ const geradores = {
       nivel: 'Comparação',
       gerar() {
         const a = rnd(5, 999), b = rnd(5, 999);
-        const [menor, mayor] = a < b ? [a, b] : [b, a];
+        const [menor, maior] = a < b ? [a, b] : [b, a];
         return {
-          q: `Qual é o maior: ${menor} ou ${mayor}?`,
-          correta: String(mayor),
-          opcoes: shuffle([menor, mayor, mayor + 1, mayor + 2].map(String)),
-          explicacao: `${mayor} é maior que ${menor}.`,
+          pergunta: `Qual é o maior: ${menor} ou ${maior}?`,
+          correta: String(maior),
+          opcoes: embaralhar([menor, maior, maior + 1, maior + 2].map(String)),
+          explicacao: `${maior} é maior que ${menor}.`,
         };
       }
     },
@@ -140,7 +140,7 @@ const geradores = {
       gerar() {
         const n = rnd(20, 999), r = Math.floor(n / 10);
         return {
-          q: `Quantas dezenas tem o número ${n}?`,
+          pergunta: `Quantas dezenas tem o número ${n}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `${n} tem ${r} dezenas (${r}0 + ${n % 10}).`,
         };
@@ -149,13 +149,13 @@ const geradores = {
     {
       nivel: 'Valor posicional',
       gerar() {
-        const c = rnd(1, 9), dec = rnd(0, 9), uni = rnd(0, 9);
-        const n = c * 100 + dec * 10 + uni;
+        const c = rnd(1, 9), dez = rnd(0, 9), uni = rnd(0, 9);
+        const n = c * 100 + dez * 10 + uni;
         return {
-          q: `O número ${n} tem ${c} centenas, ${dec} dezenas e ${uni} unidades. Qual é o número?`,
+          pergunta: `O número ${n} tem ${c} centenas, ${dez} dezenas e ${uni} unidades. Qual é o número?`,
           correta: String(n),
-          opcoes: shuffle([n, dec * 100 + c * 10 + uni, c * 100 + uni * 10 + dec, (n + 1) % 1000 || 1].map(String)),
-          explicacao: `${c} centenas + ${dec} dezenas + ${uni} unidades = ${n}.`,
+          opcoes: embaralhar([n, dez * 100 + c * 10 + uni, c * 100 + uni * 10 + dez, (n + 1) % 1000 || 1].map(String)),
+          explicacao: `${c} centenas + ${dez} dezenas + ${uni} unidades = ${n}.`,
         };
       }
     },
@@ -166,7 +166,7 @@ const geradores = {
         if (tipo === 0) {
           const c = rnd(2, 9), p = rnd(2, 12), r = c * p;
           return {
-            q: `Uma caixa tem ${p} lápis. Se se compram ${c} caixas, quantos lápis há no total?`,
+            pergunta: `Uma caixa tem ${p} lápis. Se forem compradas ${c} caixas, quantos lápis há no total?`,
             correta: String(r), opcoes: gerarDistratores(r).map(String),
             explicacao: `${c} caixas × ${p} lápis = ${r} lápis.`,
           };
@@ -176,7 +176,7 @@ const geradores = {
           if (tot % c !== 0) return this.gerar();
           const r = tot / c;
           return {
-            q: `São repartidos ${tot} caramelos em partes iguais entre ${c} crianças. Quantos caramelos recebe cada uma?`,
+            pergunta: `São repartidos ${tot} caramelos em partes iguais entre ${c} crianças. Quantos caramelos recebe cada uma?`,
             correta: String(r), opcoes: gerarDistratores(r).map(String),
             explicacao: `${tot} ÷ ${c} = ${r} caramelos por criança.`,
           };
@@ -184,7 +184,7 @@ const geradores = {
         if (tipo === 2) {
           const a = rnd(10, 90), b = rnd(5, 40), r = a + b;
           return {
-            q: `Ana tinha ${a} figurinhas e ganhou ${b} mais. Quantas figurinhas tem agora?`,
+            pergunta: `Ana tinha ${a} figurinhas e ganhou ${b} mais. Quantas figurinhas tem agora?`,
             correta: String(r), opcoes: gerarDistratores(r).map(String),
             explicacao: `${a} + ${b} = ${r} figurinhas.`,
           };
@@ -192,7 +192,7 @@ const geradores = {
         const n = rnd(2, 9) * rnd(4, 9), d = rnd(1, n / 4);
         const r = n - d;
         return {
-          q: `Um ônibus leva ${n} passageiros e descem ${d}. Quantos passageiros restam?`,
+          pergunta: `Um ônibus leva ${n} passageiros e descem ${d}. Quantos passageiros ficam?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `${n} − ${d} = ${r} passageiros.`,
         };
@@ -210,14 +210,10 @@ const geradores = {
           { n: rnd(2, 9) * 3, parte: 3, num: 1, nom: 3 },
           { n: rnd(2, 6) * 4, parte: 4, num: 2, nom: 4 },
         ];
-        const c = pick(casos);
+        const c = sortear(casos);
         const r = c.parte / c.nom * c.num;
-        const texto = [
-          `Quanto é ${c.num}/${c.nom} de ${c.parte}?`,
-          `Se uma barra de ${c.parte} cm se divide em ${c.nom} partes iguais, quanto mede cada parte?`,
-        ];
         return {
-          q: `${c.num}/${c.nom} de ${c.parte} = ?`,
+          pergunta: `${c.num}/${c.nom} de ${c.parte} = ?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `${c.num}/${c.nom} de ${c.parte} é ${c.parte} ÷ ${c.nom} × ${c.num} = ${r}.`,
           nivel: 'Fração de quantidade',
@@ -227,17 +223,17 @@ const geradores = {
     {
       nivel: 'Ler frações',
       gerar() {
-        const partes = pick([2, 3, 4, 5, 8]);
-        const caso = pick([
+        const partes = sortear([2, 3, 4, 5, 8]);
+        const caso = sortear([
           { num: 1, texto: 'uma parte' },
-          { num: 2, texto: 'dos partes' },
+          { num: 2, texto: 'duas partes' },
         ]);
         if (caso.num >= partes) return this.gerar();
         return {
-          q: `Se uma pizza se corta em ${partes} partes iguais e se comem ${caso.num}, que fração se comeu?`,
+          pergunta: `Se uma pizza é cortada em ${partes} partes iguais e são comidas ${caso.num}, que fração foi comida?`,
           correta: `${caso.num}/${partes}`,
-          opcoes: shuffle([`${caso.num}/${partes}`, `${partes}/${caso.num}`, `1/${partes}`, `${caso.num === 1 ? 2 : 1}/${partes}`].map(String)),
-          explicacao: `Comeram ${caso.num} de ${partes} partes: ${caso.num}/${partes}.`,
+          opcoes: embaralhar([`${caso.num}/${partes}`, `${partes}/${caso.num}`, `1/${partes}`, `${caso.num === 1 ? 2 : 1}/${partes}`].map(String)),
+          explicacao: `Foram comidas ${caso.num} de ${partes} partes: ${caso.num}/${partes}.`,
           nivel: 'Frações',
         };
       }
@@ -245,11 +241,11 @@ const geradores = {
     {
       nivel: 'Comparar frações',
       gerar() {
-        const a = pick([1, 2, 3]), b = pick([4, 5, 6, 8]);
+        const a = sortear([1, 2, 3]), b = sortear([4, 5, 6, 8]);
         return {
-          q: `Qual fração é maior: ${a}/${b} ou 1/${b}?`,
+          pergunta: `Qual fração é maior: ${a}/${b} ou 1/${b}?`,
           correta: `${a}/${b}`,
-          opcoes: shuffle([`${a}/${b}`, `1/${b}`, 'são iguais', 'não se pode saber'].map(String)),
+          opcoes: embaralhar([`${a}/${b}`, `1/${b}`, 'são iguais', 'não se pode saber'].map(String)),
           explicacao: `Com o mesmo denominador, ${a}/${b} é maior porque ${a} > 1.`,
           nivel: 'Comparação',
         };
@@ -258,11 +254,11 @@ const geradores = {
     {
       nivel: 'Frações equivalentes',
       gerar() {
-        const n = 1, d = 2, m = pick([2, 3, 4]);
+        const m = sortear([2, 3, 4]);
         return {
-          q: `Qual fração equivale a 1/2?`,
+          pergunta: `Qual fração equivale a 1/2?`,
           correta: `${m}/${m * 2}`,
-          opcoes: shuffle([`${m}/${m * 2}`, `${m}/${m * 2 + 1}`, `${m * 2}/${m}`, `2/${m}`].map(String)),
+          opcoes: embaralhar([`${m}/${m * 2}`, `${m}/${m * 2 + 1}`, `${m * 2}/${m}`, `2/${m}`].map(String)),
           explicacao: `1/2 = ${m}/${m * 2} (multiplicando por ${m}).`,
           nivel: 'Equivalência',
         };
@@ -271,10 +267,10 @@ const geradores = {
     {
       nivel: 'Frações de um conjunto',
       gerar() {
-        const total = rnd(2, 6) * 4, num = pick([1, 2, 3]);
+        const total = rnd(2, 6) * 4, num = sortear([1, 2, 3]);
         const r = total / 4 * num;
         return {
-          q: `Há ${total} doces. Se se entregam ${num}/4 do total, quantos doces se entregam?`,
+          pergunta: `Há ${total} doces. Se forem entregues ${num}/4 do total, quantos doces são entregues?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `${num}/4 de ${total} = ${total} ÷ 4 × ${num} = ${r}.`,
           nivel: 'Fração de conjunto',
@@ -287,28 +283,28 @@ const geradores = {
     {
       nivel: 'Sequência +',
       gerar() {
-        const ini = rnd(1, 9), paso = rnd(2, 6);
-        const seq = [ini, ini + paso, ini + 2 * paso, ini + 3 * paso];
-        const r = seq[3] + paso;
+        const ini = rnd(1, 9), passo = rnd(2, 6);
+        const seq = [ini, ini + passo, ini + 2 * passo, ini + 3 * passo];
+        const r = seq[3] + passo;
         return {
-          q: `Qual número vem depois na sequência: ${seq.join(', ')}?`,
+          pergunta: `Qual número vem depois na sequência: ${seq.join(', ')}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
-          explicacao: `A sequência soma ${paso}: depois de ${seq[3]} vem ${r}.`,
-          nivel: `Somar ${paso}`,
+          explicacao: `A sequência soma ${passo}: depois de ${seq[3]} vem ${r}.`,
+          nivel: `Somar ${passo}`,
         };
       }
     },
     {
       nivel: 'Sequência −',
       gerar() {
-        const ini = rnd(30, 60), paso = rnd(2, 6);
-        const seq = [ini, ini - paso, ini - 2 * paso, ini - 3 * paso];
-        const r = seq[3] - paso;
+        const ini = rnd(30, 60), passo = rnd(2, 6);
+        const seq = [ini, ini - passo, ini - 2 * passo, ini - 3 * passo];
+        const r = seq[3] - passo;
         return {
-          q: `Qual número vem depois na sequência: ${seq.join(', ')}?`,
+          pergunta: `Qual número vem depois na sequência: ${seq.join(', ')}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
-          explicacao: `A sequência subtrai ${paso}: depois de ${seq[3]} vem ${r}.`,
-          nivel: `Subtrair ${paso}`,
+          explicacao: `A sequência subtrai ${passo}: depois de ${seq[3]} vem ${r}.`,
+          nivel: `Subtrair ${passo}`,
         };
       }
     },
@@ -319,9 +315,9 @@ const geradores = {
         const seq = [ini, ini * 2, ini * 4, ini * 8];
         const r = ini * 16;
         return {
-          q: `Qual número vem depois na sequência: ${seq.join(', ')}?`,
+          pergunta: `Qual número vem depois na sequência: ${seq.join(', ')}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
-          explicacao: `Os números se duplicam: ${seq[3]} × 2 = ${r}.`,
+          explicacao: `Os números são duplicados: ${seq[3]} × 2 = ${r}.`,
           nivel: 'Duplicar',
         };
       }
@@ -329,11 +325,11 @@ const geradores = {
     {
       nivel: 'Sequência +10',
       gerar() {
-        const ini = rnd(3, 25), paso = 10;
-        const seq = [ini, ini + paso, ini + 2 * paso, ini + 3 * paso];
-        const r = seq[3] + paso;
+        const ini = rnd(3, 25), passo = 10;
+        const seq = [ini, ini + passo, ini + 2 * passo, ini + 3 * passo];
+        const r = seq[3] + passo;
         return {
-          q: `Qual número vem depois na sequência: ${seq.join(', ')}?`,
+          pergunta: `Qual número vem depois na sequência: ${seq.join(', ')}?`,
           correta: String(r), opcoes: gerarDistratores(r).map(String),
           explicacao: `A sequência soma 10: depois de ${seq[3]} vem ${r}.`,
           nivel: 'Somar 10',
@@ -345,10 +341,10 @@ const geradores = {
       gerar() {
         const a = rnd(1, 9), b = rnd(1, 9), c = a + b;
         return {
-          q: `Observa a tabela: a = ${a}, b = ${b}. Quanto é a + b?`,
+          pergunta: `Observe a tabela: a = ${a}, b = ${b}. Quanto é a + b?`,
           correta: String(c), opcoes: gerarDistratores(c).map(String),
           explicacao: `${a} + ${b} = ${c}.`,
-          nivel: 'Padrão simple',
+          nivel: 'Padrão simples',
         };
       }
     },
@@ -359,18 +355,18 @@ const geradores = {
       nivel: 'Cálculo rápido',
       gerar() {
         const tipo = rnd(0, 4);
-        if (tipo === 0) { const a = rnd(2, 30), b = rnd(2, 30), r = a + b; return { q: `${a} + ${b} = ?`, correta: String(r), opcoes: gerarDistratores(r).map(String), explicacao: `${a} + ${b} = ${r}.` }; }
-        if (tipo === 1) { const a = rnd(3, 50), b = rnd(1, a - 1), r = a - b; return { q: `${a} − ${b} = ?`, correta: String(r), opcoes: gerarDistratores(r).map(String), explicacao: `${a} − ${b} = ${r}.` }; }
-        if (tipo === 2) { const a = rnd(2, 10), b = rnd(2, 10), r = a * b; return { q: `${a} × ${b} = ?`, correta: String(r), opcoes: gerarDistratores(r).map(String), explicacao: `${a} × ${b} = ${r}.` }; }
-        if (tipo === 3) { const b = rnd(2, 9), c2 = rnd(2, 9), a = b * c2, r = a / b; return { q: `${a} ÷ ${b} = ?`, correta: String(r), opcoes: gerarDistratores(r).map(String), explicacao: `${a} ÷ ${b} = ${r}.` }; }
-        const a = rnd(2, 40), r = a * 2; return { q: `Dobro de ${a} = ?`, correta: String(r), opcoes: gerarDistratores(r).map(String), explicacao: `O dobro de ${a} é ${r}.` };
+        if (tipo === 0) { const a = rnd(2, 30), b = rnd(2, 30), r = a + b; return { pergunta: `${a} + ${b} = ?`, correta: String(r), opcoes: gerarDistratores(r).map(String), explicacao: `${a} + ${b} = ${r}.` }; }
+        if (tipo === 1) { const a = rnd(3, 50), b = rnd(1, a - 1), r = a - b; return { pergunta: `${a} − ${b} = ?`, correta: String(r), opcoes: gerarDistratores(r).map(String), explicacao: `${a} − ${b} = ${r}.` }; }
+        if (tipo === 2) { const a = rnd(2, 10), b = rnd(2, 10), r = a * b; return { pergunta: `${a} × ${b} = ?`, correta: String(r), opcoes: gerarDistratores(r).map(String), explicacao: `${a} × ${b} = ${r}.` }; }
+        if (tipo === 3) { const b = rnd(2, 9), c2 = rnd(2, 9), a = b * c2, r = a / b; return { pergunta: `${a} ÷ ${b} = ?`, correta: String(r), opcoes: gerarDistratores(r).map(String), explicacao: `${a} ÷ ${b} = ${r}.` }; }
+        const a = rnd(2, 40), r = a * 2; return { pergunta: `Dobro de ${a} = ?`, correta: String(r), opcoes: gerarDistratores(r).map(String), explicacao: `O dobro de ${a} é ${r}.` };
       }
     },
   ],
 };
 
 /* ---------- definição dos jogos ---------- */
-const games = {
+const jogos = {
   quiz: {
     label: 'Matemática',
     title: 'Operação Estrela',
@@ -405,19 +401,19 @@ const games = {
   },
 };
 
-/* genera N perguntas aleatórias para um jogo */
-function gerarPerguntas(gameKey, quantidade) {
-  const pool = geradores[games[gameKey].gerador];
+/* gera N perguntas aleatórias para um jogo */
+function gerarPerguntas(chaveJogo, quantidade) {
+  const pool = geradores[jogos[chaveJogo].gerador];
   const perguntas = [];
   for (let i = 0; i < quantidade; i++) {
-    const def = pick(pool);
+    const def = sortear(pool);
     const p = def.gerar();
     perguntas.push({
-      question: p.q,
-      options: p.opcoes,
-      answer: p.correta,
-      explanation: p.explicacao,
-      level: p.nivel || def.nivel,
+      pergunta: p.pergunta,
+      opcoes: p.opcoes,
+      correta: p.correta,
+      explicacao: p.explicacao,
+      nivel: p.nivel || def.nivel,
     });
   }
   return perguntas;
@@ -430,20 +426,31 @@ const CHAVE_NOME_NOVA = 'pj_ultimo_nome';
 const CHAVE_NOME_ANTIGA = 'pj_ultimo_nombre';
 
 function carregarPontuacoes() {
-  try { return JSON.parse(localStorage.getItem(CHAVE_PONTUACOES)) || []; }
+  try {
+    let val = localStorage.getItem(CHAVE_PONTUACOES_NOVA);
+    if (val === null) {
+      /* migra dados salvos com a chave antiga */
+      val = localStorage.getItem(CHAVE_PONTUACOES_ANTIGA);
+      if (val !== null) {
+        localStorage.setItem(CHAVE_PONTUACOES_NOVA, val);
+        localStorage.removeItem(CHAVE_PONTUACOES_ANTIGA);
+      }
+    }
+    return val ? JSON.parse(val) : [];
+  }
   catch (e) { return []; }
 }
 function salvarPontuacoes(lista) {
-  try { localStorage.setItem(CHAVE_PONTUACOES, JSON.stringify(lista)); } catch (e) { console.warn('não se pudo guardar'); }
+  try { localStorage.setItem(CHAVE_PONTUACOES_NOVA, JSON.stringify(lista)); } catch (e) { console.warn('não foi possível salvar'); }
 }
-function registrarPartida(nome, jKey, pontos, acertos, total) {
+function registrarPartida(nome, chaveJogo, pontos, acertos, total) {
   const pct = Math.round((acertos / total) * 100);
   const lista = carregarPontuacoes();
   lista.push({
     id: Date.now(),
     nome: nome.trim(),
     dataPartida: new Date().toISOString().slice(0, 16).replace('T', ' '),
-    jogo: games[jKey].title,
+    jogo: jogos[chaveJogo].title,
     pontos,
     acertos,
     total,
@@ -475,11 +482,11 @@ const currentPlayerPill = document.getElementById('currentPlayerPill');
 const navRanking = document.getElementById('navRanking');
 const heroRankBtn = document.getElementById('heroRankBtn');
 
-let currentGame = 'quiz';
-let currentQuestion = 0;
-let score = 0;
+let jogoAtual = 'quiz';
+let perguntaAtual = 0;
+let pontos = 0;
 let acertos = 0;
-let jogador = localStorage.getItem(CHAVE_NOME) || '';
+let jogador = localStorage.getItem(CHAVE_NOME_NOVA) || localStorage.getItem(CHAVE_NOME_ANTIGA) || '';
 let proximoJogo = null;
 
 if (currentPlayerEl) currentPlayerEl.textContent = jogador || 'Sem nome';
@@ -497,7 +504,7 @@ nameOk.addEventListener('click', () => {
   if (!n) { playerNameInput.classList.add('input-error'); playerNameInput.focus(); return; }
   playerNameInput.classList.remove('input-error');
   jogador = n;
-  try { localStorage.setItem(CHAVE_NOME, jogador); } catch (e) {}
+  try { localStorage.setItem(CHAVE_NOME_NOVA, jogador); localStorage.removeItem(CHAVE_NOME_ANTIGA); } catch (e) {}
   if (currentPlayerEl) currentPlayerEl.textContent = jogador;
   if (currentPlayerPill) currentPlayerPill.textContent = jogador;
   nameModal.classList.remove('active');
@@ -508,46 +515,46 @@ nameCancel.addEventListener('click', () => {
   proximoJogo = null;
 });
 
-function openGame(gameKey) {
-  if (!jogador) { pedirNome(() => openGame(gameKey)); return; }
-  currentGame = gameKey;
-  currentQuestion = 0;
-  score = 0;
+function abrirJogo(chaveJogo) {
+  if (!jogador) { pedirNome(() => abrirJogo(chaveJogo)); return; }
+  jogoAtual = chaveJogo;
+  perguntaAtual = 0;
+  pontos = 0;
   acertos = 0;
   choiceScreen.classList.remove('active');
   rankingScreen.classList.remove('active');
   gameScreen.classList.add('active');
-  scoreValue.textContent = score;
-  renderGame(gameKey);
+  scoreValue.textContent = pontos;
+  renderJogo(chaveJogo);
 }
 
-function backToMenu() {
+function voltarAoMenu() {
   gameScreen.classList.remove('active');
   choiceScreen.classList.add('active');
 }
 
 /* ---------- render da pergunta ---------- */
-function renderGame(gameKey) {
-  const game = games[gameKey];
-  const perguntas = game._preguntas || gerarPerguntas(gameKey, game.quantidade);
-  game._preguntas = perguntas;
-  const data = perguntas[currentQuestion];
-  gameTitle.textContent = game.title;
-  gameScreenLabel.textContent = game.label;
+function renderJogo(chaveJogo) {
+  const jogo = jogos[chaveJogo];
+  const perguntas = jogo._perguntas || gerarPerguntas(chaveJogo, jogo.quantidade);
+  jogo._perguntas = perguntas;
+  const data = perguntas[perguntaAtual];
+  gameTitle.textContent = jogo.title;
+  gameScreenLabel.textContent = jogo.label;
 
-  const playerOptions = data.options.map((option, index) =>
-    `<button class="answer-button" data-index="${index}" data-answer="${option}">${option}</button>`
+  const opcoesHtml = data.opcoes.map((opcao, index) =>
+    `<button class="answer-button" data-index="${index}" data-correta="${opcao}">${opcao}</button>`
   ).join('');
 
   gameRenderer.innerHTML = `
     <div class="question-card">
       <div class="question-top">
-        <span class="question-number">Questão ${currentQuestion + 1}/${perguntas.length}</span>
-        <span class="question-level">${data.level}</span>
+        <span class="question-number">Questão ${perguntaAtual + 1}/${perguntas.length}</span>
+        <span class="question-level">${data.nivel}</span>
       </div>
-      <div class="question-text">${data.question}</div>
+      <div class="question-text">${data.pergunta}</div>
       <div class="answer-grid">
-        ${playerOptions}
+        ${opcoesHtml}
       </div>
       <div class="question-actions">
         <span class="question-message" id="message">Escolha a resposta</span>
@@ -556,63 +563,63 @@ function renderGame(gameKey) {
     </div>
   `;
 
-  const buttons = Array.from(document.querySelectorAll('.answer-button'));
-  buttons.forEach((button) => {
-    button.addEventListener('click', () => handleAnswer(button, data, gameKey));
+  const botoes = Array.from(document.querySelectorAll('.answer-button'));
+  botoes.forEach((botao) => {
+    botao.addEventListener('click', () => responder(botao, data, chaveJogo));
   });
 }
 
-function handleAnswer(button, data, gameKey) {
-  const game = games[gameKey];
-  const perguntas = game._preguntas;
-  const allButtons = Array.from(document.querySelectorAll('.answer-button'));
-  const selected = button.dataset.answer;
+function responder(botao, data, chaveJogo) {
+  const jogo = jogos[chaveJogo];
+  const perguntas = jogo._perguntas;
+  const todosBotoes = Array.from(document.querySelectorAll('.answer-button'));
+  const selecionada = botao.dataset.correta;
   const message = document.getElementById('message');
   const nextButton = document.getElementById('nextButton');
   const pontosPorAcerto = 10;
 
-  allButtons.forEach((option) => {
-    option.disabled = true;
-    if (option.dataset.answer === data.answer) option.classList.add('correct');
+  todosBotoes.forEach((opcao) => {
+    opcao.disabled = true;
+    if (opcao.dataset.correta === data.correta) opcao.classList.add('correct');
   });
 
-  if (selected === data.answer) {
-    button.classList.add('correct');
-    score += pontosPorAcerto;
+  if (selecionada === data.correta) {
+    botao.classList.add('correct');
+    pontos += pontosPorAcerto;
     acertos++;
-    scoreValue.textContent = score;
+    scoreValue.textContent = pontos;
     message.textContent = 'Parabéns! Você acertou! (+' + pontosPorAcerto + ' pontos)';
   } else {
-    button.classList.add('wrong');
-    message.textContent = 'Quase... ' + data.explanation;
+    botao.classList.add('wrong');
+    message.textContent = 'Quase... ' + data.explicacao;
   }
 
   nextButton.disabled = false;
-  nextButton.textContent = currentQuestion < perguntas.length - 1 ? 'Próxima' : 'Finalizar';
+  nextButton.textContent = perguntaAtual < perguntas.length - 1 ? 'Próxima' : 'Finalizar';
   nextButton.onclick = () => {
-    if (currentQuestion < perguntas.length - 1) {
-      currentQuestion++;
-      renderGame(gameKey);
+    if (perguntaAtual < perguntas.length - 1) {
+      perguntaAtual++;
+      renderJogo(chaveJogo);
     } else {
-      finishGame(gameKey);
+      finalizarJogo(chaveJogo);
     }
   };
 }
 
-function finishGame(gameKey) {
-  const game = games[gameKey];
-  const perguntas = game._preguntas;
+function finalizarJogo(chaveJogo) {
+  const jogo = jogos[chaveJogo];
+  const perguntas = jogo._perguntas;
   const total = perguntas.length;
-  const pct = registrarPartida(jogador, gameKey, score, acertos, total);
-  delete game._preguntas;
+  const pct = registrarPartida(jogador, chaveJogo, pontos, acertos, total);
+  delete jogo._perguntas;
 
   const estrelas = pct >= 90 ? '⭐⭐⭐' : pct >= 70 ? '⭐⭐' : pct >= 50 ? '⭐' : '🌱';
 
   gameRenderer.innerHTML = `
     <div class="correct-card">
       <h3>Missão cumprida! ${estrelas}</h3>
-      <p><strong>${game.title}</strong> — Jogador: <strong>${jogador}</strong></p>
-      <p>Pontos: <strong>${score}</strong> · Acertos: <strong>${acertos}/${total}</strong> · Rendimento <strong>${pct}%</strong></p>
+      <p><strong>${jogo.title}</strong> — Jogador: <strong>${jogador}</strong></p>
+      <p>Pontos: <strong>${pontos}</strong> · Acertos: <strong>${acertos}/${total}</strong> · Rendimento <strong>${pct}%</strong></p>
       <p>Pontuação registrada no ranking. ✅</p>
       <div class="question-actions">
         <span class="question-message">Continue explorando!</span>
@@ -622,7 +629,7 @@ function finishGame(gameKey) {
     </div>
   `;
 
-  document.getElementById('restartButton').addEventListener('click', () => { backToMenu(); });
+  document.getElementById('restartButton').addEventListener('click', () => { voltarAoMenu(); });
   document.getElementById('verRankingBtn').addEventListener('click', () => { abrirRanking(); });
 }
 
@@ -649,17 +656,17 @@ function renderRanking() {
   }
 
   /* resumo por pessoa */
-  const porPersona = {};
+  const porPessoa = {};
   lista.forEach(r => {
     const k = r.nome.toLowerCase();
-    if (!porPersona[k]) porPersona[k] = { nome: r.nome, partidas: 0, pontos: 0, mejor: 0, acertos: 0, total: 0 };
-    porPersona[k].partidas++;
-    porPersona[k].pontos += r.pontos;
-    porPersona[k].acertos += r.acertos;
-    porPersona[k].total += r.total;
-    porPersona[k].mejor = Math.max(porPersona[k].mejor, r.pct);
+    if (!porPessoa[k]) porPessoa[k] = { nome: r.nome, partidas: 0, pontos: 0, melhor: 0, acertos: 0, total: 0 };
+    porPessoa[k].partidas++;
+    porPessoa[k].pontos += r.pontos;
+    porPessoa[k].acertos += r.acertos;
+    porPessoa[k].total += r.total;
+    porPessoa[k].melhor = Math.max(porPessoa[k].melhor, r.pct);
   });
-  const filas = Object.values(porPersona)
+  const linhas = Object.values(porPessoa)
     .sort((a, b) => b.pontos - a.pontos)
     .map(p => {
       const pctg = Math.round(p.acertos / p.total * 100);
@@ -667,23 +674,23 @@ function renderRanking() {
         <td>${p.nome}</td>
         <td>${p.partidas}</td>
         <td>${p.pontos}</td>
-        <td>${p.mejor}%</td>
+        <td>${p.melhor}%</td>
         <td>${pctg}%</td>
       </tr>`;
     }).join('');
 
-  contEl.innerHTML = filas;
-  document.getElementById('rankingResumen').textContent = `${lista.length} registros · ${Object.keys(porPersona).length} jogadores`;
+  contEl.innerHTML = linhas;
+  document.getElementById('rankingResumen').textContent = `${lista.length} registros · ${Object.keys(porPessoa).length} jogadores`;
 }
 
 function baixarCSV() {
   const lista = carregarPontuacoes();
   if (lista.length === 0) { alert('Não há pontuações para exportar.'); return; }
-  const filas = [['Nome', 'Data', 'Jogo', 'Pontos', 'Acertos', 'Total', 'Rendimento %']];
+  const linhas = [['Nome', 'Data', 'Jogo', 'Pontos', 'Acertos', 'Total', 'Rendimento %']];
   lista.forEach(r => {
-    filas.push([r.nome, r.dataPartida, r.jogo, r.pontos, r.acertos, r.total, r.pct]);
+    linhas.push([r.nome, r.dataPartida, r.jogo, r.pontos, r.acertos, r.total, r.pct]);
   });
-  const csv = '\uFEFF' + filas.map(f => f.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\r\n');
+  const csv = '\uFEFF' + linhas.map(f => f.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\r\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -695,15 +702,15 @@ function baixarCSV() {
 gameGrid.addEventListener('click', (event) => {
   const card = event.target.closest('.game-card');
   if (!card) return;
-  openGame(card.dataset.game);
+  abrirJogo(card.dataset.game);
 });
 
 startButton.addEventListener('click', () => {
-  openGame('quiz');
+  abrirJogo('quiz');
 });
 
 backButton.addEventListener('click', () => {
-  backToMenu();
+  voltarAoMenu();
 });
 
 rankButton.addEventListener('click', () => {

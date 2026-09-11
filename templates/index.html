@@ -215,6 +215,7 @@
             <thead>
               <tr>
                 <th>Jogador</th>
+                <th>Sala</th>
                 <th>Partidas</th>
                 <th>Pontos totais</th>
                 <th>Melhor %</th>
@@ -225,9 +226,9 @@
           </table>
           <div class="ranking-actions">
             <button class="btn primary" id="csvButton">⬇ Exportar CSV</button>
-            <button class="btn ghost-danger" id="clearButton">Limpar tudo</button>
+            <button class="btn ghost-danger" id="clearButton">Limpar sala</button>
           </div>
-          <p class="ranking-hint">As pontuações da sala ficam compartilhadas no servidor e podem ser exportadas a CSV para o docente.</p>
+          <p class="ranking-hint">O ranking é dividido por salas de competição. Cada sala mostra apenas a competição ativa.</p>
         </div>
       </section>
     </main>
@@ -237,8 +238,20 @@
     <div class="modal-card">
       <div class="modal-icon">🧮</div>
       <h3>Quem vai jogar?</h3>
-      <p>Escreva seu nome para que seus pontos fiquem registrados no ranking.</p>
+      <p>Escreva seu nome e escolha a sala para registrar a sua pontuação.</p>
       <input type="text" id="playerNameInput" maxlength="30" placeholder="Seu nome" autocomplete="off" />
+      <select id="roomSelect" aria-label="Sala da competição">
+        <option value="Sala 1">Sala 1</option>
+        <option value="Sala 2">Sala 2</option>
+        <option value="Sala 3">Sala 3</option>
+        <option value="Sala 4">Sala 4</option>
+        <option value="Sala 5">Sala 5</option>
+        <option value="Sala 6">Sala 6</option>
+        <option value="Sala 7">Sala 7</option>
+        <option value="Sala 8">Sala 8</option>
+        <option value="Sala 9">Sala 9</option>
+        <option value="Sala 10">Sala 10</option>
+      </select>
       <div class="modal-actions">
         <button class="btn ghost" id="nameCancel">Cancelar</button>
         <button class="btn primary" id="nameOk">A jogar!</button>

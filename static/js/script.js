@@ -422,10 +422,17 @@ function gerarPerguntas(chaveJogo, quantidade) {
 /* ---------- pontuações compartilhadas pela sala ---------- */
 const CHAVE_NOME_NOVA = 'pj_ultimo_nome';
 const CHAVE_NOME_ANTIGA = 'pj_ultimo_nombre';
+const CHAVE_SALA_NOVA = 'pj_ultima_sala';
+
+function getSalaAtual() {
+  return localStorage.getItem(CHAVE_SALA_NOVA) || 'Sala 1';
+}
 
 async function carregarPontuacoes() {
   try {
-    const resposta = await fetch('/api/pontuacoes');
+    const sala = getSalaAtual();
+    const url = `/api/pontuacoes?sala=${encodeURIComponent(sala)}`;
+    const resposta = await fetch(url);
     if (!resposta.ok) return [];
     return await resposta.json();
   } catch (e) {
@@ -452,6 +459,7 @@ async function registrarPartida(nome, chaveJogo, pontos, acertos, total) {
   const pct = Math.round((acertos / total) * 100);
   const payload = {
     nome: nome.trim(),
+    sala: getSalaAtual(),
     dataPartida: new Date().toISOString().slice(0, 16).replace('T', ' '),
     jogo: jogos[chaveJogo].title,
     pontos,
@@ -491,6 +499,7 @@ const rankButton = document.getElementById('rankButton');
 const rankClose = document.getElementById('rankClose');
 const scoreValue = document.getElementById('scoreValue');
 const playerNameInput = document.getElementById('playerNameInput');
+const roomSelect = document.getElementById('roomSelect');
 const nameModal = document.getElementById('nameModal');
 const nameOk = document.getElementById('nameOk');
 const nameCancel = document.getElementById('nameCancel');
@@ -504,6 +513,7 @@ let perguntaAtual = 0;
 let pontos = 0;
 let acertos = 0;
 let jogador = localStorage.getItem(CHAVE_NOME_NOVA) || localStorage.getItem(CHAVE_NOME_ANTIGA) || '';
+let salaAtual = getSalaAtual();
 let proximoJogo = null;
 
 if (currentPlayerEl) currentPlayerEl.textContent = jogador || 'Sem nome';
@@ -514,14 +524,21 @@ function pedirNome(callback) {
   proximoJogo = callback;
   nameModal.classList.add('active');
   playerNameInput.value = jogador;
+  if (roomSelect) roomSelect.value = salaAtual;
   playerNameInput.focus();
 }
 nameOk.addEventListener('click', () => {
   const n = playerNameInput.value.trim();
+  const s = roomSelect ? roomSelect.value : salaAtual;
   if (!n) { playerNameInput.classList.add('input-error'); playerNameInput.focus(); return; }
   playerNameInput.classList.remove('input-error');
   jogador = n;
-  try { localStorage.setItem(CHAVE_NOME_NOVA, jogador); localStorage.removeItem(CHAVE_NOME_ANTIGA); } catch (e) {}
+  salaAtual = s;
+  try {
+    localStorage.setItem(CHAVE_NOME_NOVA, jogador);
+    localStorage.removeItem(CHAVE_NOME_ANTIGA);
+    localStorage.setItem(CHAVE_SALA_NOVA, salaAtual);
+  } catch (e) {}
   if (currentPlayerEl) currentPlayerEl.textContent = jogador;
   if (currentPlayerPill) currentPlayerPill.textContent = jogador;
   nameModal.classList.remove('active');
@@ -662,20 +679,20 @@ rankClose.addEventListener('click', () => {
   choiceScreen.classList.add('active');
 });
 
-async function renderRanking() {
+async async function renderRanking() {
   const lista = await carregarPontuacoes();
   const contEl = document.getElementById('rankingBody');
 
   if (lista.length === 0) {
-    contEl.innerHTML = `<tr><td colspan="5" class="vazio">Ainda não há pontuações registradas.</td></tr>`;
+    contEl.innerHTML = `<tr><td colspan="6" class="vazio">Ainda não há pontuações registradas nesta sala.</td></tr>`;
     document.getElementById('rankingResumen').textContent = '0 registros';
     return;
   }
 
   const porPessoa = {};
   lista.forEach(r => {
-    const k = r.nome.toLowerCase();
-    if (!porPessoa[k]) porPessoa[k] = { nome: r.nome, partidas: 0, pontos: 0, melhor: 0, acertos: 0, total: 0 };
+    const k = (r.nome || '').toLowerCase();
+    if (!porPessoa[k]) porPessoa[k] = { nome: r.nome, sala: r.sala || getSalaAtual(), partidas: 0, pontos: 0, melhor: 0, acertos: 0, total: 0 };
     porPessoa[k].partidas++;
     porPessoa[k].pontos += r.pontos;
     porPessoa[k].acertos += r.acertos;
@@ -688,6 +705,7 @@ async function renderRanking() {
       const pctg = Math.round(p.acertos / p.total * 100);
       return `<tr>
         <td>${p.nome}</td>
+        <td>${p.sala || getSalaAtual()}</td>
         <td>${p.partidas}</td>
         <td>${p.pontos}</td>
         <td>${p.melhor}%</td>
@@ -702,15 +720,15 @@ async function renderRanking() {
 async function baixarCSV() {
   const lista = await carregarPontuacoes();
   if (lista.length === 0) { alert('Não há pontuações para exportar.'); return; }
-  const linhas = [['Nome', 'Data', 'Jogo', 'Pontos', 'Acertos', 'Total', 'Rendimento %']];
+  const linhas = [['Nome', 'Sala', 'Data', 'Jogo', 'Pontos', 'Acertos', 'Total', 'Rendimento %']];
   lista.forEach(r => {
-    linhas.push([r.nome, r.dataPartida, r.jogo, r.pontos, r.acertos, r.total, r.pct]);
+    linhas.push([r.nome, r.sala || getSalaAtual(), r.dataPartida, r.jogo, r.pontos, r.acertos, r.total, r.pct]);
   });
   const csv = '\uFEFF' + linhas.map(f => f.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';')).join('\r\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `pontuacoes_matematica_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = `pontuacoes_matematica_${new Date().toISOString().slice(0, 10)}_${getSalaAtual().replace(/\s+/g, '_')}.csv`;
   a.click();
 }
 
@@ -738,8 +756,8 @@ if (heroRankBtn) heroRankBtn.addEventListener('click', () => { abrirRanking(); }
 
 document.getElementById('csvButton').addEventListener('click', baixarCSV);
 document.getElementById('clearButton').addEventListener('click', async () => {
-  if (confirm('Limpar TODAS as pontuações registradas?')) {
-    await fetch('/api/pontuacoes', { method: 'DELETE' });
+  if (confirm(`Limpar todas as pontuações da ${getSalaAtual()}?`)) {
+    await fetch(`/api/pontuacoes?sala=${encodeURIComponent(getSalaAtual())}`, { method: 'DELETE' });
     renderRanking();
   }
 });

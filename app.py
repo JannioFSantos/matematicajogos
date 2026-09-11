@@ -15,6 +15,20 @@ if not DATA_FILE.exists():
     DATA_FILE.write_text('[]', encoding='utf-8')
 
 
+def normalize_sala(value):
+    if value is None:
+        return 'Sala 1'
+    try:
+        raw = str(value).strip()
+        raw = raw.lower().replace('sala', '').strip()
+        num = int(raw)
+    except Exception:
+        return 'Sala 1'
+    if 1 <= num <= 10:
+        return f'Sala {num}'
+    return 'Sala 1'
+
+
 def carregar_pontuacoes():
     try:
         with DATA_FILE.open('r', encoding='utf-8') as f:
@@ -34,9 +48,20 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/api/salas', methods=['GET'])
+def listar_salas():
+    salas = [f'Sala {i}' for i in range(1, 11)]
+    return jsonify({'salas': salas})
+
+
 @app.route('/api/pontuacoes', methods=['GET'])
 def listar_pontuacoes():
-    return jsonify(carregar_pontuacoes())
+    sala = request.args.get('sala')
+    dados = carregar_pontuacoes()
+    if sala:
+        sala_norm = normalize_sala(sala)
+        dados = [r for r in dados if r.get('sala') == sala_norm]
+    return jsonify(dados)
 
 
 @app.route('/api/pontuacoes', methods=['POST'])
@@ -44,6 +69,7 @@ def registrar_pontuacao():
     payload = request.get_json(silent=True) or {}
     nome = str(payload.get('nome', '')).strip()
     jogo = str(payload.get('jogo', '')).strip()
+    sala = normalize_sala(payload.get('sala', 'Sala 1'))
     pontos = int(payload.get('pontos', 0) or 0)
     acertos = int(payload.get('acertos', 0) or 0)
     total = int(payload.get('total', 0) or 0)
@@ -63,6 +89,7 @@ def registrar_pontuacao():
     registro = {
         'id': str(uuid.uuid4()),
         'nome': nome,
+        'sala': sala,
         'dataPartida': data_partida,
         'jogo': jogo,
         'pontos': pontos,
@@ -86,7 +113,13 @@ def atualizar_pontuacoes():
 
 @app.route('/api/pontuacoes', methods=['DELETE'])
 def limpar_pontuacoes():
-    salvar_pontuacoes([])
+    sala = normalize_sala(request.args.get('sala'))
+    dados = carregar_pontuacoes()
+    if request.args.get('sala'):
+        dados = [r for r in dados if r.get('sala') != sala]
+    else:
+        dados = []
+    salvar_pontuacoes(dados)
     return jsonify({'ok': True})
 
 

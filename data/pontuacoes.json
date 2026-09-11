@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "id": "eb36276a-a429-40f4-b6f0-3fc49b9a67be",
+    "nome": "Aluno Sala 1",
+    "sala": "Sala 1",
+    "dataPartida": "2026-09-11 11:31",
+    "jogo": "Operação Estrela",
+    "pontos": 80,
+    "acertos": 4,
+    "total": 5,
+    "pct": 80
+  }
+]
